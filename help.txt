@@ -1,2 +1,0 @@
-help       - print a list of available commands
-echo       - print a value, it will be interpreted so use quotes if youre printing a string
