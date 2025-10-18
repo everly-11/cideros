@@ -1,9 +1,9 @@
 import re
 import customfuncs
 
-def interpret(expr):
+def interpret(expr, args):
     def tokenize(expression):
-        token_pattern = r'"[^"]*"|[+\\\-*/():]|\d+\.\d+|\d+'
+        token_pattern = r'"[^"]*"|[+\\\-*/():=<>\[\]]|\d+\.\d+|\d+'
         tokens = re.findall(token_pattern, expression)
         return tokens
     def parse_expression(index, tokens):
@@ -15,16 +15,31 @@ def interpret(expr):
             left = values.pop()
             op = ops.pop()
             if op == '+':
-                values.append(left + right)
+                if isinstance(left, bool) and isinstance(right, bool):
+                    values.append(left and right)
+                else:
+                    values.append(left + right)
             elif op == '-':
-                values.append(left - right)
+                if isinstance(left, int) and isinstance(right, list):
+                    values.append(left and right)
+                else:
+                    values.append(left - right)
             elif op == '*':
-                values.append(left * right)
+                if isinstance(left, bool) and isinstance(right, bool):
+                    values.append(left or right)
+                else:
+                    values.append(left + right)
             elif op == '/':
                 values.append(left / right)
             elif op == ':':
-                values.append(customfuncs.func(left, right))
-        precedence = {'+': 1, '-': 1, '*': 2, '/': 2, ':': 1}
+                values.append(customfuncs.func(left, right, args))
+            elif op == '=':
+                values.append(left == right)
+            elif op == '<':
+                values.append(left <= right)
+            elif op == '>':
+                values.append(left >= right)
+        precedence = {'+': 1, '-': 1, '*': 2, '/': 2, ':': 1, '=': 1, '<': 1, '>': 1, }
 
         while index < len(tokens):
             token = tokens[index]
