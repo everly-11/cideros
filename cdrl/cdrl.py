@@ -1,5 +1,6 @@
 import expinterpreter
-import re
+import kernel
+import ast
 
 def getfile(name):
     with open(name, "r") as f:
@@ -29,24 +30,50 @@ def tokenize(expression, character):
                     result.append(cur)
                     cur = ""
                     escaped=False
-                else:
+                elif not i == " " or cur != "":
                     cur += str(i)
                     escaped=False
             result.append(cur)
             return result
 
-def run(filename):
+def run(filename,args):
+    kernel.wipe()
+    kernel.write("", "static____")
     file = getfile(f"{filename}.cdrl")
-    print(file)
-    def runlines(code=file):
-        def action(code):
-            line = ""
-            index = -1
-            while not "end" in line:
-                index += 1
-                line = tokenize(code[index], " ")
-                print(line)
-        action(code=code)
-    runlines()
-    
-run("test")
+    def runlines(code, args):
+        line = " "
+        index = -1
+        while not line[0] == "end":
+            index += 1
+            line = tokenize(code[index], " ")
+            match line[0]:
+                case "echo":
+                    print(expinterpreter.interpret(line[1], args))
+                case "rep":
+                    for i in range(int(expinterpreter.interpret(line[1], args))):     
+                        runlines(tokenize(line[2][1:-1], ";"), args=args)
+                case "while":
+                    while expinterpreter.interpret(line[1], args):     
+                        runlines(tokenize(line[2][1:-1], ";"), args=args)
+                case "wipe":
+                    kernel.wipe()
+                case "def":
+                    kernel.write(line[2], line[1])
+                case "if":
+                    if expinterpreter.interpret(line[1], args):
+                        runlines(tokenize(line[2][1:-1], ";"), args=args)
+                    elif line [3] == "else":
+                        runlines(tokenize(line[4][1:-1], ";"), args=args)
+                case "var":
+                    kernel.write(expinterpreter.interpret(line[2], args), expinterpreter.interpret(line[1], args))
+                case "varadd":
+                    kernel.write(expinterpreter.interpret(f'("var":{line[1]})', args) + expinterpreter.interpret(line[2], args), expinterpreter.interpret(line[1], args))
+                case "call":
+                    runlines(tokenize(expinterpreter.interpret(f'("var":"{line[1]}")', args)[1:-1], ";"), expinterpreter.interpret(line[2], args))
+                case "append":
+                    arr = ast.literal_eval(expinterpreter.interpret(f'("var":{line[1]})', args))
+                    arr.append(expinterpreter.interpret(line[2], args))
+                    kernel.write(str(arr), expinterpreter.interpret(line[1], args))
+    runlines(file, args)
+
+run("test", [])
