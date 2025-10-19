@@ -1,5 +1,6 @@
 import expinterpreter
 import kernel
+import os
 import ast
 
 def getfile(name):
@@ -41,9 +42,8 @@ def run(filename,args):
     file = getfile(filename)
     def runlines(code, args):
         line = " "
-        index = -1
-        while not line[0] == "end":
-            index += 1
+        index = 0
+        while index < len(code):
             line = tokenize(code[index], " ")
             if not line[0][0:2] == "//":
                 match line[0]:
@@ -60,11 +60,24 @@ def run(filename,args):
                     case "def":
                         kernel.write(line[2], line[1])
                     case "if":
-                        if expinterpreter.interpret(line[1], args):
-                            runlines(tokenize(line[2][1:-1], ";"), args=args)
-                        elif len(line) > 3:
-                            if line [3] == "else":
-                                runlines(tokenize(line[4][1:-1], ";"), args=args)
+                        i = 0
+                        executed = False
+                        while i < len(line):
+                            keyword = line[i]
+                            if keyword == "if" or keyword == "elif":
+                                condition = line[i+1]
+                                block = line[i+2][1:-1]
+                                if not executed and expinterpreter.interpret(condition, args):
+                                    runlines(tokenize(block, ";"), args=args)
+                                    executed = True
+                                i += 3
+                            elif keyword == "else":
+                                block = line[i+1][1:-1]
+                                if not executed:
+                                    runlines(tokenize(block, ";"), args=args)
+                                i += 2
+                            else:
+                                i += 1
                     case "var":
                         kernel.write(expinterpreter.interpret(line[2], args), expinterpreter.interpret(line[1], args))
                     case "varadd":
@@ -80,6 +93,11 @@ def run(filename,args):
                             f.write(expinterpreter.interpret(line[2], args))
                     case "cdrl":
                         run(expinterpreter.interpret(line[1], args), expinterpreter.interpret(line[2], args))
+                    case "chdir":
+                        os.chdir(expinterpreter.interpret(line[1], args))
+                    case "oscmd":
+                        os.system(expinterpreter.interpret(line[1], args))
+            index += 1
 
     runlines(file, args)
 
