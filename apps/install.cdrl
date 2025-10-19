@@ -1,0 +1,7 @@
+wipe;
+var "packurl" ("https://raw.githubusercontent.com/sarabasscringe/cideros/refs/heads/main/" + ("arg":0));
+echo ("target: " + ("var":"packurl"));
+var "pack" ("request":("var":"packurl"));
+writefile ((("arg":0)/"/")<"-1") ("var":"pack");
+echo "finished, check file before running";
+end;
