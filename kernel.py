@@ -21,3 +21,7 @@ def get(location):
 
 def request(url):
     return(requests.get(url).text.replace("\r\n", "\n").removesuffix("\n"))
+
+def getfile(name):
+    with open(name, "r") as f:
+        return f.read()
