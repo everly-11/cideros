@@ -3,8 +3,9 @@ import customfuncs
 
 def interpret(expr, args):
     def tokenize(expression):
-        token_pattern = r'"[^"]*"|[+\\\-*/():=<>\[\]]|\d+\.\d+|\d+'
+        token_pattern = r'"(?:[^"\\]|\\.)*"|[+\-*/():=<>\[\]]|\d+\.\d+|\d+'
         tokens = re.findall(token_pattern, expression)
+        tokens = [t.replace('\\"', '"') for t in tokens]
         return tokens
     def parse_expression(index, tokens):
         values = []
@@ -22,10 +23,12 @@ def interpret(expr, args):
             elif op == '-':
                     values.append(left - right)
             elif op == '*':
-                if isinstance(left, bool) and isinstance(right, bool):
+                if isinstance(left, list) and isinstance(right, str):
+                    values.append(right.join(map(str, left)))
+                elif isinstance(left, bool) and isinstance(right, bool):
                     values.append(left or right)
                 else:
-                    values.append(left + right)
+                    values.append(left * right)
             elif op == '/':
                 if isinstance(left, str) and isinstance(right, str):
                     values.append(left.split(right))
@@ -39,15 +42,15 @@ def interpret(expr, args):
                 if isinstance(left, bool) and isinstance(right, bool):
                     values.append(left <= right)
                 else:
-                    if len(right.split(",")) == 2:
-                        values.append(left[int(right.split(",")[0]):int(right.split(",")[1])])
-                    if len(right.split(",")) == 1:
-                        values.append(left[int(right)])
+                    r = right.strip('"')
+                    if ':' in r:
+                        parts = r.split(':')
+                        values.append(left[slice(*[int(x) if x else None for x in parts])])
                     else:
-                        print("error; more or less than 2 values provided")
+                        values.append(left[int(r)])
             elif op == '>':
                 values.append(left >= right)
-        precedence = {'+': 1, '-': 1, '*': 2, '/': 2, ':': 1, '=': 1, '<': 1, '>': 1, }
+        precedence = {'+': 1, '-': 1, '*': 1, '/': 1, ':': 1, '=': 1, '<': 1, '>': 1, }
 
         while index < len(tokens):
             token = tokens[index]
