@@ -1,4 +1,5 @@
 import json
+import requests
 
 def write(info, location):
     try:
@@ -17,3 +18,6 @@ def get(location):
     with open("mem.json", "r") as f:
         data = json.load(f)
     return data.get(location)
+
+def request(url):
+    return(requests.get(url).text.replace("\r\n", "\n").removesuffix("\n"))
