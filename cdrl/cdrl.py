@@ -37,9 +37,8 @@ def tokenize(expression, character):
             return result
 
 def run(filename,args):
-    kernel.wipe()
     kernel.write("", "static____")
-    file = getfile(f"{filename}.cdrl")
+    file = getfile(filename)
     def runlines(code, args):
         line = " "
         index = -1
@@ -74,6 +73,9 @@ def run(filename,args):
                     arr = ast.literal_eval(expinterpreter.interpret(f'("var":{line[1]})', args))
                     arr.append(expinterpreter.interpret(line[2], args))
                     kernel.write(str(arr), expinterpreter.interpret(line[1], args))
+                case "writefile":
+                    with open(expinterpreter.interpret(line[1], args), "w") as f:
+                        f.write(expinterpreter.interpret(line[2], args))
     runlines(file, args)
 
-run("test", [])
+#run("install.cdrl", '["txt/help.txt"]')
