@@ -20,9 +20,6 @@ def interpret(expr, args):
                 else:
                     values.append(left + right)
             elif op == '-':
-                if isinstance(left, int) and isinstance(right, list):
-                    values.append(left and right)
-                else:
                     values.append(left - right)
             elif op == '*':
                 if isinstance(left, bool) and isinstance(right, bool):
@@ -30,13 +27,24 @@ def interpret(expr, args):
                 else:
                     values.append(left + right)
             elif op == '/':
-                values.append(left / right)
+                if isinstance(left, str) and isinstance(right, str):
+                    values.append(left.split(right))
+                else:
+                    values.append(left / right)
             elif op == ':':
                 values.append(customfuncs.func(left, right, args))
             elif op == '=':
                 values.append(left == right)
             elif op == '<':
-                values.append(left <= right)
+                if isinstance(left, bool) and isinstance(right, bool):
+                    values.append(left <= right)
+                else:
+                    if len(right.split(",")) == 2:
+                        values.append(left[int(right.split(",")[0]):int(right.split(",")[1])])
+                    if len(right.split(",")) == 1:
+                        values.append(left[int(right)])
+                    else:
+                        print("error; more or less than 2 values provided")
             elif op == '>':
                 values.append(left >= right)
         precedence = {'+': 1, '-': 1, '*': 2, '/': 2, ':': 1, '=': 1, '<': 1, '>': 1, }
@@ -71,4 +79,4 @@ def interpret(expr, args):
     result = parse_expression(0, tokens)[1]
     return result
 
-#print(interpret('"hello " + "world " + ("str":14)'))
+#print(interpret('"hello"<"1,-1"', []))
