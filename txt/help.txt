@@ -1,3 +1,4 @@
 help       - print a list of available commands
 echo       - print a value, it will be interpreted so use quotes if youre printing a string
 install    - install packages from the cideros github, use as `install txt/help.txt`, make sure to include path
+cdrl       - run cdrl programs, add a [] with your args if the program needs initial args, or just an empty []
