@@ -1,0 +1,23 @@
+echo "welcome to the cider os terminal (cdrl version)";
+echo "use `help` to get a list of commands";
+
+while "True" {
+    var "cwd" ("oswdraw":0);
+    var "c" ("input":("var":"cwd"+"> "));
+    e
+    if (("var":"c"/" "<"0") = "echo") {
+        echo ("eval":("var":"c"/" "<"1"));
+    end;};
+    if (("var":"c"/" "<"0") = "help") {
+        echo ("getfile":"help.txt");
+    end;};
+    if (("var":"c"/" "<"0") = "cdrl") {
+        cdrl ("var":"c"/" "<"1") ("var":"c"/" "<"2:"*" ");
+    end;};
+    if (("var":"c"/" "<"0") = "install") {
+        echo ("var":"c"/" "<"1");
+        cdrl "install.cdrl" ("[\""+("var":"c"/" "<"1")+"\"]");
+    end;};
+end};
+
+end;
