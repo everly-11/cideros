@@ -18,3 +18,5 @@ def func(action, inp, args):
             return not (inp == "True") if inp in ("True", "False") else bool(inp)
         case "arg":
             return ast.literal_eval(args)[inp]
+        case "request":
+            return kernel.request(inp)
