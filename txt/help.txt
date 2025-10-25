@@ -1,4 +1,29 @@
+echo       - print a value, evaluated with cdrl
+    syntax : echo "hello world!"
 help       - print a list of available commands
-echo       - print a value, it will be interpreted so use quotes if youre printing a string
+wipe       - wipe memory.json
+wipehistory- wipe history of commands
+history    - print history of commands
+oscmd      - perform low level commands, evaluated with cdrl
+    syntax : oscmd "ls"
+cdrl       - run cdrl programs, optionally add args seperated by `,` . use quotes for string arguments
+    syntax : cdrl fibonacci.cdrl 10, 20
 install    - install packages from the cideros github, use as `install txt/help.txt`, make sure to include path
-cdrl       - run cdrl programs, optionally add args, these args will be raw, not interpreted. use as `cdrl test.cdrl "arg1", "arg2"`
+    syntax : install txt/help.txt
+cd         - change working directory
+    syntax : cd txt/helpful_texts
+ls         - list directories under working directory
+clr        - clear terminal
+ppfsys     - print platform.system (linux / windows)
+rm         - remove files
+    syntax : rm txt\help.txt
+rmdir      - remove a directory and its children, works like `rm -r` in linux
+    syntax : rmdir txt
+mv         - move a directory or files
+    syntax : mv help.txt txt
+mkdir      - make a directory
+    syntax : mkdir txt2
+cf         - create a new files
+    syntax : cf myprogram.cdrl
+cat        - print the contents of a file, usually doesnt display a cat
+    syntax : cat help.txt
