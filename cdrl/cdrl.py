@@ -2,6 +2,7 @@ import expinterpreter
 import kernel
 import os
 import ast
+import time
 
 def getfile(name):
     with open(name, "r") as f:
@@ -36,11 +37,7 @@ def tokenize(expression, character):
                     escaped=False
             result.append(cur)
             return result
-
-def run(filename,args):
-    kernel.write("", "static____")
-    file = getfile(filename)
-    def runlines(code, args):
+def runlines(code, args):
         line = " "
         index = 0
         while index < len(code):
@@ -97,8 +94,15 @@ def run(filename,args):
                         os.chdir(expinterpreter.interpret(line[1], args))
                     case "oscmd":
                         os.system(expinterpreter.interpret(line[1], args))
+                    case "return":
+                        return (expinterpreter.interpret(line[1], args))
             index += 1
 
+def run(filename,args):
+    kernel.write("", "static____")
+    file = getfile(filename)
+    start = time.perf_counter()
     runlines(file, args)
-
+    end = time.perf_counter()
+    print(f"Elapsed time: {(end - start)*1000:.6f} ms")
 #run("cml.cdrl", '[]')
