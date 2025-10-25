@@ -1,5 +1,6 @@
 import re
 import customfuncs
+import ast
 
 def interpret(expr, args):
     def tokenize(expression):
@@ -18,10 +19,15 @@ def interpret(expr, args):
             if op == '+':
                 if isinstance(left, bool) and isinstance(right, bool):
                     values.append(left and right)
+                elif isinstance(left, list):
+                    values.append(left + [right])
                 else:
                     values.append(left + right)
             elif op == '-':
-                    values.append(left - right)
+                    if isinstance(left, str) and isinstance(right, str):
+                        values.append(left.replace(ast.literal_eval(right)[0], ast.literal_eval(right)[1]))
+                    else:
+                        values.append(left - right)
             elif op == '*':
                 if isinstance(left, list) and isinstance(right, str):
                     values.append(right.join(map(str, left)))
