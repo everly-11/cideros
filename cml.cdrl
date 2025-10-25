@@ -12,8 +12,14 @@ while "True" {
     }
     elif (("var":"c"/" "<"0") = "wipe") {
         wipe;
+        var "c" "wipe";
     }
-
+    elif (("var":"c"/" "<"0") = "wipehistory") {
+        writefile "history.txt" "[]";
+    }        
+    elif (("var":"c"/" "<"0") = "history") {
+        echo ("getfile":"history.txt");
+    }
     elif (("var":"c"/" "<"0") = "oscmd") {
         oscmd ("eval":("var":"c"/" "<"1:"*" "));
     }
@@ -24,8 +30,102 @@ while "True" {
         echo ("var":"c"/" "<"1");
         cdrl "install.cdrl" ("[\""+("var":"c"/" "<"1")+"\"]");
     }
-    
     elif (("var":"c"/" "<"0") = "cd") {
         chdir ("eval":("var":"c"/" "<"1:"*" "));
+    }
+    elif (("var":"c"/" "<"0") = "ls") {
+        if ("llsystem":0="Windows") {
+            oscmd ("dir");
+        }
+        elif ("llsystem":0="Linux") {
+            oscmd ("ls");
+        }
+        else {
+            echo "low level system isnt recognised as supported";
+        };
+    }
+    elif (("var":"c"/" "<"0") = "clr") {
+        if ("llsystem":0="Windows") {
+            oscmd ("cls");
+        }
+        elif ("llsystem":0="Linux") {
+            oscmd ("clear");
+        }
+        else {
+            echo "low level system isnt recognised as supported";
+        };
+    }
+    elif (("var":"c"/" "<"0") = "ppfsys") {
+        echo ("low level system: "+("llsystem":0));
+    }
+    elif (("var":"c"/" "<"0") = "rm") {
+        if ("llsystem":0="Windows") {
+            oscmd ("del "+("var":"c"/" "<"1:"*" "));
+        }
+        elif ("llsystem":0="Linux") {
+            oscmd ("rm -r "+("var":"c"/" "<"1:"*" "));
+        }
+        else {
+            echo "low level system isnt recognised as supported";
+        };
+    }
+    elif (("var":"c"/" "<"0") = "rmdir") {
+        if ("llsystem":0="Windows") {
+            oscmd ("rmdir /s "+("var":"c"/" "<"1:"*" "));
+        }
+        elif ("llsystem":0="Linux") {
+            oscmd ("rm -r "+("var":"c"/" "<"1:"*" "));
+        }
+        else {
+            echo "low level system isnt recognised as supported";
+        };
+    }
+    elif (("var":"c"/" "<"0") = "mv") {
+        if ("llsystem":0="Windows") {
+            oscmd ("move "+("var":"c"/" "<"1:"*" "));
+        }
+        elif ("llsystem":0="Linux") {
+            oscmd ("mv "+("var":"c"/" "<"1:"*" "));
+        }
+        else {
+            echo "low level system isnt recognised as supported";
+        };
+    }
+    elif (("var":"c"/" "<"0") = "mkdir") {
+        oscmd ("mkdir "+("var":"c"/" "<"1:"*" "))
+    }
+    elif (("var":"c"/" "<"0") = "cf") {
+        if ("llsystem":0="Windows") {
+            oscmd ("echo.> "+("var":"c"/" "<"1:"*" "));
+        }
+        elif ("llsystem":0="Linux") {
+            oscmd ("touch "+("var":"c"/" "<"1:"*" "));
+        }
+        else {
+            echo "low level system isnt recognised as supported";
+        };
+    }
+    elif (("var":"c"/" "<"0") = "cat") {
+        if ("llsystem":0="Windows") {
+            oscmd ("type "+("var":"c"/" "<"1:"*" "));
+        }
+        elif ("llsystem":0="Linux") {
+            oscmd ("cat "+("var":"c"/" "<"1:"*" "));
+        }
+        else {
+            echo "low level system isnt recognised as supported";
+        };
+    }
+    else {
+        echo "command not recognised";
+    };
+    if ("not":("var":"c"="wipehistory")) {
+        var "history" ("getfile":"history.txt");
+        if ("var":"history"="[]") {
+            writefile "history.txt" ("str":(("liteval":"[]")+("var":"c")));
+        }
+        else {
+            writefile "history.txt" ("str":(("liteval":("var":"history"))+("var":"c")));
+        };
     };
 };
